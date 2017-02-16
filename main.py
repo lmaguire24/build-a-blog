@@ -43,12 +43,9 @@ class Blog(db.Model):
 
 
 class NewPost(Handler):
+    #this generates
     def render_front(self, title="", blog_post="", error=""):
-
-        #this calls entered art from the database:
-        posts = db.GqlQuery("SELECT * FROM Blog ORDER BY created DESC LIMIT 5")
-
-        self.render("front.html", title=title, blog_post=blog_post, error=error, posts=posts)
+        self.render("front.html", title=title, blog_post=blog_post, error=error)
 
     def get(self):
         self.render_front()
@@ -61,31 +58,36 @@ class NewPost(Handler):
             b = Blog(title=title, blog_post=blog_post)
             b.put()
 
-            self.redirect("/blog")
+            self.redirect("/")
 
         else:
             error = "we need both a title and a blog post!"
             self.render_front(title, blog_post, error = error)
 
 class BlogPage(Handler):
-    # def get(self):
+    def render_blogpage(self, title=""):
+
+        #this calls entered art from the database:
+        posts = db.GqlQuery("SELECT * FROM Blog ORDER BY created DESC LIMIT 5")
+
+        self.render("blog-page.html", title=title, posts=posts)
+
+    def get(self):
+        self.render_blogpage()
+
 
 
     def post(self):
-        def post(self):
-            title = self.request.get("title")
-            blog_post = self.request.get("blog_post")
+        title = self.request.get("title")
+        blog_post = self.request.get("blog_post")
 
-            if title and blog_post:
-                b = Blog(title=title, blog_post=blog_post)
-                b.put()
+        if title and blog_post:
+            b = Blog(title=title, blog_post=blog_post)
+            b.put()
 
-                self.redirect("/blog")
-            else:
-                error = "we need both a title and a blog post!"
-                self.render_front(title, blog_post, error=error)
+            self.redirect("/blog")
 
 app = webapp2.WSGIApplication([
-        # ('/blog', BlogPage)
+        ('/blog', BlogPage),
         ('/', NewPost)
     ], debug=True)
