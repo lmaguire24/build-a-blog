@@ -41,6 +41,9 @@ class Blog(db.Model):
     blog_post = db.TextProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
 
+class ViewPostHandler(webapp2.RequestHandler):
+    def get(self, id):
+        pass #replace this with some code to handle the request
 
 class NewPost(Handler):
     #this generates
@@ -58,7 +61,7 @@ class NewPost(Handler):
             b = Blog(title=title, blog_post=blog_post)
             b.put()
 
-            self.redirect("/")
+            self.redirect("/blog")
 
         else:
             error = "we need both a title and a blog post!"
@@ -89,5 +92,7 @@ class BlogPage(Handler):
 
 app = webapp2.WSGIApplication([
         ('/blog', BlogPage),
-        ('/', NewPost)
-    ], debug=True)
+        ('/newpost', NewPost)
+    webapp2.Route('/blog/<post_id:\d+>', ViewPost)
+], debug=True)
+
