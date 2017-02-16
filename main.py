@@ -41,9 +41,10 @@ class Blog(db.Model):
     blog_post = db.TextProperty(required=True)
     created = db.DateTimeProperty(auto_now_add=True)
 
-class ViewPostHandler(webapp2.RequestHandler):
-    def get(self, id):
-        pass #replace this with some code to handle the request
+class ViewPost(Handler):
+    def get(self, blog_id):
+        blog = Blog.get_by_id(int(blog_id))
+        self.render("single-page.html", blog=blog)
 
 class NewPost(Handler):
     #this generates
@@ -79,7 +80,6 @@ class BlogPage(Handler):
         self.render_blogpage()
 
 
-
     def post(self):
         title = self.request.get("title")
         blog_post = self.request.get("blog_post")
@@ -92,7 +92,7 @@ class BlogPage(Handler):
 
 app = webapp2.WSGIApplication([
         ('/blog', BlogPage),
-        ('/newpost', NewPost)
-    webapp2.Route('/blog/<post_id:\d+>', ViewPost)
+        ('/newpost', NewPost),
+    webapp2.Route('/blog/<blog_id:\d+>', ViewPost)
 ], debug=True)
 
